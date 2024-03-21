@@ -15,14 +15,13 @@ import java.time.format.DateTimeFormatter;
 
 public class PaymentModel {
     private int paymentId;
-    //foreign key,subscriberId
     private Double amount;
 
     private LocalDateTime paymentDate;
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     String formattedDate = now.format(formatter);
-    private String paymentMethod;//credit card,paypal,gpay
+    private String paymentMethod;
     private String paymentStatus;
 
 

@@ -121,35 +121,32 @@
 
        <div class="form-section">
            <label>Plan Features:</label><br>
-               <form:hidden path="planFeatures" />
                <div class="checkbox-group">
-                   <input type="checkbox" id="hdStreaming" name="hdStreaming" value="HD Streaming"
+                   <input type="checkbox" id="PlanFeatures" name="planFeatures" value="HD Streaming"
                        <% if (subscriptionPlan.getPlanFeatures().contains("HD Streaming")) { %> checked <% } %>>
                    <label for="hdStreaming">HD Streaming</label><br>
 
-                   <input type="checkbox" id="adFree" name="adFree" value="Ad-Free Viewing"
+                   <input type="checkbox" id="adFree" name="planFeatures" value="Ad-Free Viewing"
                        <% if (subscriptionPlan.getPlanFeatures().contains("Ad-Free Viewing")) { %> checked <% } %>>
                    <label for="adFree">Ad-Free Viewing</label><br>
 
-                   <input type="checkbox" id="downloadableContent" name="downloadableContent" value="Downloadable Content"
+                   <input type="checkbox" id="downloadableContent" name="planFeatures" value="Downloadable Content"
                        <% if (subscriptionPlan.getPlanFeatures().contains("Downloadable Content")) { %> checked <% } %>>
                    <label for="downloadableContent">Downloadable Content</label><br>
 
-                   <input type="checkbox" id="Multilingual" name="Multilingual" value="Multilingual"
+                   <input type="checkbox" id="Multilingual" name="planFeatures" value="Multilingual"
                        <% if (subscriptionPlan.getPlanFeatures().contains("Multilingual")) { %> checked <% } %>>
                    <label for="Multilingual">Multilingual</label><br>
 
-                   <input type="checkbox" id="DeviceCompatability" name="DeviceCompatability" value="Device Compatibility"
+                   <input type="checkbox" id="DeviceCompatability" name="planFeatures" value="Device Compatibility"
                        <% if (subscriptionPlan.getPlanFeatures().contains("Device Compatibility")) { %> checked <% } %>>
                    <label for="DeviceCompatability">Device Compatibility</label><br>
 
-                   <input type="checkbox" id="EarlyAccess" name="EarlyAccess" value="Early Access"
+                   <input type="checkbox" id="EarlyAccess" name="planFeatures" value="Early Access"
                        <% if (subscriptionPlan.getPlanFeatures().contains("Early Access")) { %> checked <% } %>>
                    <label for="EarlyAccess">Early Access</label><br>
                </div>
 
-               <input type="submit" class="submit-button" value="Submit">
-           </form:form>
        </div>
 
         </div>
@@ -159,8 +156,9 @@
                                <td colspan="6">No Content found</td>
                            </tr>
                         <% } %>
-               </form:form>
+               <input type="submit" class="submit-button" value="Submit">
 
+           </form:form>
 
 </center>
 </body>

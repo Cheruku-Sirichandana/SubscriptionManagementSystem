@@ -102,6 +102,7 @@
 
     </tr>
 
+
     <%
         }
     } else {
@@ -109,12 +110,20 @@
     <tr>
         <td colspan="6">No Content found</td>
     </tr>
+
+    <tr>
+            <td colspan="6">
+                <form action="extra">
+                    <input type="hidden" name="subscriptionStatus" value="${subscriptionStatus}">
+                    <input type="hidden" name="count" value="${count}">
+                    <input type="hidden" name="userId" value="${userId}">
+                    <input type="hidden" name="planId" value="${planId}">
+                    <input type="submit" value="SubscriptionPlans">
+                </form>
+            </td>
+        </tr>
     <% } %>
 </table>
-
-
-
-
-                    <center><h3><a href="home">Home</a></h3></center>
+<center><h3><a href="home">Home</a></h3></center>
 </body>
 </html>

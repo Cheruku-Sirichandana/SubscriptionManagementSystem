@@ -19,8 +19,7 @@ public class Admin {
     private String adminUsername;
     private String adminPassword;
     private String role;
-//    @OneToMany(cascade = CascadeType.ALL)
-//    private List<Content> contentList=new ArrayList<>();
+
 
 
 }

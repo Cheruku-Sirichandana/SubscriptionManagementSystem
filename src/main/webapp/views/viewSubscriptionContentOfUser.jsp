@@ -95,16 +95,32 @@
         <td colspan="6">No Content found</td>
     </tr>
     <% } %>
+    <td><form action="extra">
+          <input type="hidden" name="subscriptionStatus" value="${subscriptionStatus}">
+    <input type="hidden" name="count" value="${count}">
+       <input type="hidden" name="userId" value="${userId}">
+       <input type="hidden" name="planId" value="${planId}">
+          <input type="submit" value="Subscribe for Other Plan"></form></td>
+
       <td><form action="UserLogin">
       <input type="hidden" name="subscriptionStatus" value="${subscriptionStatus2}">
 <input type="hidden" name="count" value="${count}">
       <input type="submit" value="UserLoginPage"></form></td>
+
+
+
+
 </table>
-
-
-
-
-
-                    <center><h3><a href="home">Home</a></h3></center>
+<center><h3><a href="home">Home</a></h3></center>
 </body>
 </html>
+
+
+
+<!--// validation null check....
+    // display true edit false
+    // while editing the content data should be display
+    // naming conventions+++++++++++++++++
+    // bean utils+++++++++++++++++
+    // validations (annotations)
+    // request type (GET or POST)-->

@@ -1,5 +1,6 @@
 package com.SpringBoot.SubscriptionManagementSystemProject.Entity;
 
+import com.SpringBoot.SubscriptionManagementSystemProject.Model.SubscriptionPlanModel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Setter
 
 public class SubscriptionPlan {
-    //planId, name, price, duration, features
+
     @Id
     private int planId;
     private String planName;
@@ -22,7 +23,7 @@ public class SubscriptionPlan {
 
     private int planDuration;
     private String planFeatures;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Content> contentList=new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -40,4 +41,6 @@ public class SubscriptionPlan {
                 ", users=" + users +
                 '}';
     }
+
+
 }

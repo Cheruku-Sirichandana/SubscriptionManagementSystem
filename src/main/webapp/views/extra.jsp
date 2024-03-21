@@ -71,6 +71,7 @@
     <input type="hidden" name="planModel" value="${planModel}">
     <input type="hidden" name="planName" value="${planName}">
     <input type="hidden" name="count" value="${count}">
+    <input type="hidden" name="planId" value="${planId}">
         <input type="submit" value="upgrade" required>
     </form>
     <form action="degrade">
@@ -79,6 +80,7 @@
            <input type="hidden" name="planModel" value="${planModel}">
            <input type="hidden" name="planName" value="${planName}">
            <input type="hidden" name="count" value="${count}">
+           <input type="hidden" name="planId" value="${planId}">
             <input type="submit" value="degrade" required>
         </form>
 </html>

@@ -18,11 +18,6 @@ public class ContentValidations implements Validator {
         ContentModel contentModel = (ContentModel) target;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contentId", "contentId");
 
-
-
-//        if (contentModel.getContentId() != 0 && String.valueOf(contentModel.getContentId()).isEmpty()) {
-//            errors.rejectValue("contentId", "contentId.invalid");
-//        }
         String title=contentModel.getTitle();
         if (title != null && title.trim().isEmpty()) {
             errors.rejectValue("title", "title.empty", "Title cannot be empty");

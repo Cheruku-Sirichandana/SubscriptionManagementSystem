@@ -55,7 +55,7 @@
     <form:form action="UserRegistered" modelAttribute="userModel">
     <h3>${msg1}</h3>
      <label for="userId">User Id:</label><br>
-             <form:input path="userId" type="number"/><br>
+             <form:input path="userId" name="userId" type="number" required="true"/><br>
             <form:errors path="userId" style="color: red;"/><br>
 
         <label for="userName">User Name:</label><br>

@@ -80,7 +80,6 @@ public class UserController {
     public String userLogin(ModelMap model,@RequestParam("subscriptionStatus") SubscriptionStatus subscriptionStatus,@RequestParam("count") int count) {
         model.addAttribute("subscriptionStatus", subscriptionStatus);
         model.addAttribute("count",count);
-        System.out.println("Its coming man..........."+subscriptionStatus);
         model.addAttribute("userModel",new UserModel());
         return "userLogin";
     }
@@ -91,7 +90,7 @@ public class UserController {
             model.addAttribute("subscriptionStatus",subscriptionStatus);
             model.addAttribute("count",count);
             System.out.println(bindingResult.getAllErrors());
-            return "redirect:/UserLogin?subscriptionStatus=" + subscriptionStatus + "&count=" + count;
+            return "userLogin";
         }
         System.out.println(userModel.getUserId()+"   "+userModel.getUserPassword());
         Boolean userFound=userServices.userCheck(userModel);
@@ -144,7 +143,7 @@ public class UserController {
         String planName=userServices.findPlanName(subscriptionPlanModel);
         model.addAttribute("planName",planName);
         model.addAttribute("subscriptionStatus",subscriptionStatus);
-        model.addAttribute("paymentModel",new PaymentModel());
+        model.addAttribute("paymentModel",paymentModel);
         if(subscriptionStatus==SubscriptionStatus.NONE && count==1){
             SubscriptionStatus subscriptionStatus1 = userServices.setSubscriptionStatus(userId,planId);
             model.addAttribute("subscriptionStatus", subscriptionStatus1);
@@ -178,7 +177,7 @@ public class UserController {
             model.addAttribute("subscriptionStatus", subscriptionStatus1);
             userServices.save(paymentModel);
             List<Content> contentList = userServices.display(userId, planId, subscriptionStatus);
-            System.out.println(contentList);
+
             if (contentList != null) {
                 model.addAttribute("contentList1", contentList);
                 SubscriptionStatus subscriptionStatus2 = SubscriptionStatus.NONE;
@@ -189,6 +188,7 @@ public class UserController {
         else{
             return "payment";
         }
+        System.out.println("PLAN ID IS"+planId);
         return "extra";
     }
     @RequestMapping("/subscriptionContentForUser")
@@ -222,22 +222,24 @@ public class UserController {
     }
 
     @RequestMapping("/upgrade")
-    public String upgradeSubscription(@RequestParam("userId") int userId, @RequestParam("planName") String planName,@RequestParam("subscriptionStatus") SubscriptionStatus subscriptionStatus,@RequestParam("count") int count, ModelMap model){
+    public String upgradeSubscription(@RequestParam("userId") int userId, @RequestParam("planName") String planName,@RequestParam("subscriptionStatus") SubscriptionStatus subscriptionStatus,@RequestParam("count") int count,@RequestParam("planId") int planId, ModelMap model){
         count=count+1;
         List<SubscriptionPlan> subscriptionPlanList=userServices.upgradeSubscription(userId,planName);
         model.addAttribute("subscriptionPlanList",subscriptionPlanList);
         model.addAttribute("userId",userId);
         model.addAttribute("count",count);
+        model.addAttribute("planId",planId);
         model.addAttribute("subscriptionStatus",subscriptionStatus);
         return "upgrade";
     }
 
     @RequestMapping("/degrade")
-    public String degradeSubscriptionPlan(@RequestParam("userId") int userId,@RequestParam("planName") String planName,@RequestParam("subscriptionStatus") SubscriptionStatus subscriptionStatus,@RequestParam("count") int count,ModelMap model){
+    public String degradeSubscriptionPlan(@RequestParam("userId") int userId,@RequestParam("planName") String planName,@RequestParam("subscriptionStatus") SubscriptionStatus subscriptionStatus,@RequestParam("count") int count,@RequestParam("planId") int planId, ModelMap model){
         count=count+1;
         List<SubscriptionPlan> subscriptionPlanList=userServices.degradeSubscription(userId,planName);
         model.addAttribute("subscriptionPlanList",subscriptionPlanList);
         model.addAttribute("userId",userId);
+        model.addAttribute("planId",planId);
         model.addAttribute("count",count);
         model.addAttribute("subscriptionStatus",subscriptionStatus);
         return "downgrade";
@@ -248,10 +250,4 @@ public class UserController {
     }
 
   }
-// valudation null check
-// display true edit false
-// while editing the content data should be display
-// nameing convenctions+++++++++++++++++
-// bean utils+++++++++++++++++
-// validations (annotaions)
-// request type (GET or POST)
+

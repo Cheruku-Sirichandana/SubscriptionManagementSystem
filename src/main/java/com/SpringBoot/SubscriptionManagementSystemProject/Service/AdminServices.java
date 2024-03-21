@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -42,9 +43,6 @@ public class AdminServices implements AdminInterface {
        Admin admin=adminRepository.findByAdminUsername(adminModel.getAdminUsername());
        if(admin==null){
            Admin admin1=  modelEntity.adminModel_Entity(adminModel);
-
-
-          // BeanUtils.copyProperties(adminModel,admin1);
            admin1.setRole("ROLE_ADMIN");
 
            admin1.setAdminUsername(adminModel.getAdminUsername());
@@ -65,19 +63,29 @@ public class AdminServices implements AdminInterface {
        }
        return false;
    }
-   public Content addedContent(ContentModel contentModel){
-       Content content=contentRepository.findById(contentModel.getContentId()).orElse(null);
-       if(content==null){
-           Content content1=  modelEntity.contentModel_Entity(contentModel);
+    public Content addedContent(ContentModel contentModel) {
+        Content content = contentRepository.findById(contentModel.getContentId()).orElse(null);
 
-          // BeanUtils.copyProperties(contentModel,content1);
-           contentRepository.save(content1);
-           return null;
-       }
-       return content;
-   }
-     public String deleteContent(int contentId){
-           System.out.println("Entered deleted Content");
+        if (content == null) {
+            Content content1 = modelEntity.contentModel_Entity(contentModel);
+            List<SubscriptionPlan> subscriptionPlanList=subscriptionPlanRepository.findAll();
+            subscriptionPlanList.forEach(subscriptionPlan -> {
+                if(subscriptionPlan.getPlanName().equals(content1.getSubscriptionLevel())){
+                    List<Content> contentList=subscriptionPlan.getContentList();
+                    contentList.add(content1);
+                    subscriptionPlan.setContentList(contentList);
+                    subscriptionPlanRepository.save(subscriptionPlan);
+                }
+            });
+            content=content1;
+
+        }
+
+        return content;
+    }
+
+
+    public String deleteContent(int contentId){
            Content content=contentRepository.getReferenceById(contentId);
            List<SubscriptionPlan> subscriptionPlanList=content.getSubscriptionPlanList();
            subscriptionPlanList.forEach(subscriptionPlan -> {
@@ -104,7 +112,6 @@ public class AdminServices implements AdminInterface {
 
         contentList.forEach(content -> {
         List<SubscriptionPlan> subscriptionPlanList =new ArrayList<>(content.getSubscriptionPlanList()) ;
-
         subscriptionPlanList.remove(subscriptionPlan);
         content.setSubscriptionPlanList(subscriptionPlanList);
         contentRepository.save(content);
@@ -137,50 +144,79 @@ public class AdminServices implements AdminInterface {
        contentList.forEach(s->
        {
            ContentModel contentModel= entityModel.contentEntity_Model(s);
-
-          // BeanUtils.copyProperties(s,contentModel);
            contents.add(contentModel);
        });
        return contents;
    }
 
    //subscription
-    public SubscriptionPlanModel addedSubscriptionPlan(SubscriptionPlanModel subscriptionPlanModel){
-       List<Content> contentList=contentRepository.findAll();
-       SubscriptionPlan subscriptionPlan=subscriptionPlanRepository.findById(subscriptionPlanModel.getPlanId()).orElse(null);
-       if(subscriptionPlan==null) {
-           String planName = subscriptionPlanModel.getPlanName();
-           List<Content> contentList1 = new ArrayList<>();
-           contentList.forEach(e -> {
-               if (e.getSubscriptionLevel().equals(planName)) {
-                   contentList1.add(e);
-                   SubscriptionPlan subscriptionPlan1 =modelEntity.subscriptionPlanModel_entity(subscriptionPlanModel);
-
-                   //BeanUtils.copyProperties(subscriptionPlanModel, subscriptionPlan1);
-                   List<SubscriptionPlan> subscriptionPlanList = e.getSubscriptionPlanList();
-                   subscriptionPlanList.add(subscriptionPlan1);
-                   e.setSubscriptionPlanList(subscriptionPlanList);
-                   contentRepository.save(e);
+   public SubscriptionPlanModel addedSubscriptionPlan(SubscriptionPlanModel subscriptionPlanModel) {
+       SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(subscriptionPlanModel.getPlanId()).orElse(null);
+       if (subscriptionPlan == null) {
+           SubscriptionPlan subscriptionPlan1 = modelEntity.subscriptionPlanModel_entity(subscriptionPlanModel);
+          // subscriptionPlanRepository.save(subscriptionPlan1);
+           List<Content> contentList = contentRepository.findAll();
+           contentList.forEach(content -> {
+               if(content.getSubscriptionLevel().equals(subscriptionPlan1.getPlanName())){
+//                   List<SubscriptionPlan> subscriptionPlanList=content.getSubscriptionPlanList();
+//                   subscriptionPlanList.add(subscriptionPlan1);
+//                   content.setSubscriptionPlanList(subscriptionPlanList);
+                  // contentRepository.save(content);
+                   List<Content> contentList1=subscriptionPlan1.getContentList();
+                   contentList1.add(content);
+                   subscriptionPlan1.setContentList(contentList1);
+                   subscriptionPlanRepository.save(subscriptionPlan1);
                }
            });
-           subscriptionPlanModel.setContentList(contentList1);
-           SubscriptionPlan subscriptionPlan1 = modelEntity.subscriptionPlanModel_entity(subscriptionPlanModel);
 
-           //BeanUtils.copyProperties(subscriptionPlanModel, subscriptionPlan1);
-           subscriptionPlanRepository.save(subscriptionPlan1);
-           return subscriptionPlanModel;
-       }
-       return null;
-    }
+//           Optional<SubscriptionPlan> newSubscriptionPlan1 = contentRepository.findAll().stream()
+//                   .filter(content -> content.getSubscriptionLevel().equals(subscriptionPlan1.getPlanName()))
+//                   .map(content -> {
+//                       List<SubscriptionPlan> subscriptionPlanList = content.getSubscriptionPlanList();
+//                       subscriptionPlanList.add(subscriptionPlan1);
+//                       content.setSubscriptionPlanList(subscriptionPlanList);
+//                       contentList.add(content);
+//                       subscriptionPlan.setContentList(contentList);
+//                       contentRepository.save(content);
+//                       return subscriptionPlan1;
+//                   })
+//                   .findFirst();
+            }
+                 return subscriptionPlanModel;
+        }
+
+
+        // public Content addedContent(ContentModel contentModel) {
+        //        Content content = contentRepository.findById(contentModel.getContentId()).orElse(null);
+        //
+        //        if (content == null) {
+        //            Content content1 = modelEntity.contentModel_Entity(contentModel);
+        //            contentRepository.save(content1);
+        //        List<SubscriptionPlan> subscriptionPlanList=new ArrayList<>();
+        //            Optional<Content> newContent = subscriptionPlanRepository.findAll().stream()
+        //                    .filter(subscriptionPlan -> subscriptionPlan.getPlanName().equals(content1.getSubscriptionLevel()))
+        //                    .map(subscriptionPlan -> {
+        //                        List<Content> contentList = subscriptionPlan.getContentList();
+        //                        contentList.add(content1);
+        //                        subscriptionPlan.setContentList(contentList);
+        //                        subscriptionPlanList.add(subscriptionPlan);
+        //                        content1.setSubscriptionPlanList(subscriptionPlanList);
+        //                        subscriptionPlanRepository.save(subscriptionPlan);
+        //                        return content1;
+        //                    })
+        //                    .findFirst();
+        //
+        //            return newContent.orElse(null);
+        //        }
+        //
+        //        return content;
+        //    }
     public List<SubscriptionPlanModel> viewSubscriptionPlans(){
        List<SubscriptionPlan> subscriptionPlanList=subscriptionPlanRepository.findAll();
        List<SubscriptionPlanModel> subscriptionPlanModelList=new ArrayList<>();
        subscriptionPlanList.forEach(s->
        {
            SubscriptionPlanModel subscriptionPlanModel=entityModel.subscriptionPlanModel(s);;
-           System.out.println("sssssss"+subscriptionPlanModel);
-
-           //BeanUtils.copyProperties(s,subscriptionPlanModel);
            subscriptionPlanModelList.add(subscriptionPlanModel);
        });
        return subscriptionPlanModelList;
@@ -207,16 +243,9 @@ public class AdminServices implements AdminInterface {
 
     public SubscriptionPlan updatedSubscriptionPlans(SubscriptionPlan subscriptionPlan,int planId){
        SubscriptionPlan subscriptionPlan1=subscriptionPlanRepository.findById(planId).orElse(null);
-       if(subscriptionPlan!=null){
-           subscriptionPlan1.setPlanPrice(subscriptionPlan.getPlanPrice());
-           subscriptionPlan1.setPlanName(subscriptionPlan.getPlanName());
-           subscriptionPlan1.setPlanDuration(subscriptionPlan.getPlanDuration());
-
-           System.out.println(subscriptionPlan.getPlanFeatures());
-           subscriptionPlan1.setPlanFeatures(subscriptionPlan.getPlanFeatures());
-           subscriptionPlan1.setUsers(subscriptionPlan.getUsers());
-           subscriptionPlan1.setContentList(subscriptionPlan.getContentList());
-           subscriptionPlanRepository.save(subscriptionPlan1);
+       if(subscriptionPlan1!=null){
+           subscriptionPlan.setPlanId(planId);
+           subscriptionPlanRepository.save(subscriptionPlan);
            return subscriptionPlan;
        }
        return null;

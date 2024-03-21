@@ -96,7 +96,7 @@
 
             <div class="form-group">
                 <label for="formattedDate">Payment Date:</label>
-                <input type="date" id="formattedDate" name="formattedDate" value="<%= java.time.LocalDate.now() %>"required ">
+                <input type="date" id="formattedDate" name="formattedDate" value="<%= java.time.LocalDate.now().toString() %>" required>
 
             </div>
 

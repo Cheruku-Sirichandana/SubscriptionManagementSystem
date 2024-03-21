@@ -15,19 +15,11 @@ public class UserValidations implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         UserModel userModel = (UserModel) target;
-        int userId = 0;
-
-        String userIdStr = String.valueOf(userId);
-        if (userIdStr != null ) {
-            try {
-                userId = Integer.parseInt(String.valueOf(userId));
-            } catch (NumberFormatException e) {
-                errors.rejectValue("userId","userId");
-            }
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors,"userId","userId1");
+        if (userModel.getUserId() <= 0) {
+            errors.rejectValue("userId", "userId1");
         }
-
-
-         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "userName");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "userName");
         if (userModel.getUserEmail() != null&& !userModel.getUserEmail().endsWith("@gmail.com")){
             errors.rejectValue("userEmail","userEmail");
         }
@@ -36,30 +28,19 @@ public class UserValidations implements Validator {
         {
             errors.rejectValue("userPassword", "userPassword");
         }
-
         ValidationUtils.rejectIfEmptyOrWhitespace(errors,"subscriptionStatus","subscriptionStatus");
-
-
-
-
     }
     public void validate1(Object target, Errors errors) {
-
-
         UserModel userModel = (UserModel) target;
-
-
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userId", "userId");
-//        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "userName");
-//        if (userModel.getUserEmail() != null&& !userModel.getUserEmail().endsWith("@gmail.com")){
-//            errors.rejectValue("userEmail","userEmail");
-//        }
+
         String userPassword=userModel.getUserPassword();
+        if(userPassword.isBlank()){
+            errors.rejectValue("userPassword","userPassword1");
+        }
         if(userPassword!=null && userPassword.length()<6)
         {
             errors.rejectValue("userPassword", "userPassword");
         }
-
-//        ValidationUtils.rejectIfEmptyOrWhitespace(errors,"subscriptionStatus","subscriptionStatus");
     }
 }

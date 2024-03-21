@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,24 +41,22 @@ public class UserServices implements UserInterface {
     public UserModel userRegistered(UserModel userModel){
        Users user=userRepository.findByUserName(userModel.getUserName());
        if(user==null){
-           Users user1=new Users();
-           modelEntity.userModel_Entity(userModel);
+           Users user1= modelEntity.userModel_Entity(userModel);
+
            //BeanUtils.copyProperties(userModel,user1);
+           user1.setUserId(userModel.getUserId());
            user1.setRole("ROLE_USER");
            user1.setUserName(userModel.getUserName());
            user1.setUserPassword(passwordEncoder.encode(userModel.getUserPassword()));
+           user1.setUserEmail(userModel.getUserEmail());
+           user1.setSubscriptionStatus(userModel.getSubscriptionStatus());
            userRepository.save(user1);
            return userModel;
        }
        return null;
    }
     public Boolean userCheck(UserModel userModel) {
-//        if (userRepository.findAll().stream().anyMatch(user -> user.getUserId()==(userModel.getUserId()) && user.getUserPassword().equals(userModel.getUserPassword()))){
-//            return true;
-//        }
         return userRepository.findAll().stream().anyMatch(users -> users.getUserId()==userModel.getUserId() && passwordEncoder.matches(userModel.getUserPassword(),users.getUserPassword()));
-//        System.out.println("No matching username found in the database.");
-//        return false;
     }
     public List<UserModel> viewUsers(){
         List<Users> usersList=userRepository.findAll();
@@ -63,8 +64,6 @@ public class UserServices implements UserInterface {
         usersList.forEach(s->
         {
             UserModel userModel = entityModel.userEntity_Model(s);
-
-            //BeanUtils.copyProperties(s,userModel);
             userModelList.add(userModel);
         });
         return userModelList;
@@ -73,7 +72,7 @@ public class UserServices implements UserInterface {
        Users users=userRepository.findById(userModel.getUserId()).orElse(null);
        if(users!=null){
            SubscriptionStatus subscriptionStatus=users.getSubscriptionStatus();
-           System.out.println("MY SUBSCRIPTION STATUS IS"+subscriptionStatus);
+
            return subscriptionStatus;
        }
        return null;
@@ -84,7 +83,7 @@ public class UserServices implements UserInterface {
         if (user != null && passwordEncoder.matches(userModel.getUserPassword(),user.getUserPassword()))
         {
                 SubscriptionStatus subscriptionStatus=user.getSubscriptionStatus();
-                System.out.println("***userSubscriptionStatus is"+subscriptionStatus);
+
                 return subscriptionStatus;
         }
         return SubscriptionStatus.NONE;
@@ -146,15 +145,27 @@ public class UserServices implements UserInterface {
       return paymentStatus;
     }
     public PaymentModel save(PaymentModel paymentModel){
-       Payment payment=paymentRepository.findById(paymentModel.getPaymentId()).orElse(null);
-       if(payment!=null){
-           paymentRepository.save(payment);
-           System.out.println("))0))))))))");
-           return paymentModel;
-       }
-       return null;
+        Payment payment = new Payment();
+        payment.setPaymentId(paymentModel.getPaymentId());
+        payment.setPaymentMethod(paymentModel.getPaymentMethod());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime paymentDate = LocalDate.parse(paymentModel.getFormattedDate(), formatter).atStartOfDay();
+        paymentModel.setPaymentDate(paymentDate);
+        payment.setPaymentDate(paymentModel.getPaymentDate());
+        payment.setPaymentStatus(paymentModel.getPaymentStatus());
+        payment.setAmount(paymentModel.getAmount());
+        System.out.println("PAYMENT"+paymentModel.getPaymentDate());
+        System.out.println("Pa"+paymentModel.getPaymentStatus());
+        Payment savedPayment = paymentRepository.save(payment);
 
+        if (savedPayment != null) {
+        return paymentModel;
+        } else {
+
+            return null;
+        }
     }
+
 
     public List<Content> subscriptionContentForUser(int userId){
         Users user=userRepository.findById(userId).orElse(null);
@@ -163,12 +174,12 @@ public class UserServices implements UserInterface {
            SubscriptionStatus subscriptionStatus = user.getSubscriptionStatus();
            if (subscriptionStatus == SubscriptionStatus.ACTIVE) {
                SubscriptionPlan subscriptionPlan = user.getSubscriptionPlan();
-               List<Content> contentList = subscriptionPlan.getContentList();
-               return contentList;
+               System.out.println(user.getSubscriptionPlan());
+               System.out.println(subscriptionPlan.getContentList());
+               return subscriptionPlan.getContentList();
            }
            else {
                List<Content> freeContents = contentRepository.findBySubscriptionLevel("Free");
-               System.out.println(freeContents);
                return freeContents;
            }
        }
@@ -278,6 +289,7 @@ public String findPlanName(SubscriptionPlanModel subscriptionPlanModel){
                      subscriptionPlanList.add(s);
                    }
               });
+              subscriptionPlanList.forEach(i -> System.out.println(i.getPlanName()));
               return subscriptionPlanList;
           }
           if(planName.equals("Platinum")){

@@ -111,7 +111,7 @@
                 <input type="hidden" name="subscriptionStatus" value="${subscriptionStatus}">
                 <input type="hidden" name="count" value="${count}">
                 <input type="hidden" name="userId" value="${userId}">
-                <!-- You cannot access plan.getPlanId() here, so I've removed it -->
+                <input type="hidden" name="planId" value="${planId}">
                 <input type="submit" value="SubscriptionPlans">
             </form>
         </td>

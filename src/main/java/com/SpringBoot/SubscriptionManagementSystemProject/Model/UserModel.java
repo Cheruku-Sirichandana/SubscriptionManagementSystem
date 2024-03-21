@@ -17,11 +17,12 @@ import java.text.NumberFormat;
 @AllArgsConstructor
 public class UserModel {
     @NotNull(message = "User ID should not be null")
-    //@Pattern(regexp = "\\d+", message = "User ID should be an integer")
     @NotBlank(message = "Id is required")
     @Pattern(regexp = "\\d$",message = "User ID should be an integer")
-    private String mobileNo;
     private int userId;
+
+    private String mobileNo;
+
     private String userName;
     private String userEmail;
     private String userPassword;

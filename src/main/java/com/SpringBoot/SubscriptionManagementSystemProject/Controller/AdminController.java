@@ -116,7 +116,7 @@ public class AdminController {
             return "addContent";
         }
         Content content2= adminServices.addedContent(contentModel);
-        if(content2==null){
+        if(content2!=null){
             return "redirect:/viewContent";
         }
         else {
@@ -198,13 +198,6 @@ public class AdminController {
         model.addAttribute("subscriptionModelList",subscriptionPlanModelList);
         return "viewSubscriptionPlans";
     }
-//    @RequestMapping("/viewSubscriptionPlanPage")
-//    public String viewSubscriptionPlanPage(ModelMap model){
-//        List<SubscriptionPlanModel> subscriptionPlanModelList=adminServices.viewSubscriptionPlans();
-//
-//        model.addAttribute("subscriptionModelList",subscriptionPlanModelList);
-//        return "viewSubscriptionPlanPage";
-//    }
     @RequestMapping("/updateSubscriptionPlan")
     public String updateSubscriptionPlan(@RequestParam("planId") int planId,ModelMap model){
         SubscriptionPlan subscriptionPlan=adminServices.searchByPlanId(planId);
@@ -214,15 +207,6 @@ public class AdminController {
     }
     @RequestMapping("/updatedSubscriptionPlans")
     public String updatedSubscriptionPlans(@Valid @ModelAttribute("subscriptionPlan") SubscriptionPlan subscriptionPlan,@RequestParam("planId") int planId,BindingResult bindingResult,ModelMap model){
-        System.out.println(subscriptionPlan.getPlanFeatures());
-        System.out.println(subscriptionPlan.getPlanName());
-
-//        subscriptionPlanValidations.validate(subscriptionPlan, bindingResult);
-//        if (bindingResult.hasErrors()) {
-//            System.out.println(bindingResult.getAllErrors());
-//           model.addAttribute("planId",planId);
-//            return "updatingSubscriptionPlan";
-//        }
         SubscriptionPlan subscriptionPlanModel1=adminServices.updatedSubscriptionPlans(subscriptionPlan,planId);
         if(subscriptionPlanModel1!=null){
             return "redirect:/viewSubscriptionPlans";
